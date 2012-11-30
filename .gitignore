@@ -1,0 +1,6 @@
+*.swp
+*.pyc
+config.ini
+.DS_Store
+iron.json
+app-engine/values.txt

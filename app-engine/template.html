@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>newsy</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+      .sidebar-nav {
+        padding: 9px 0;
+}
+      .thumb {
+	      max-height: 250px;
+	      overflow-y: hidden;
+      }
+      .hero-unit {
+	      text-align: center;
+      }
+    </style>
+    <script type="text/javascript">
+	    function addThumb(url, img) {
+		    $("#start_row").hide();
+		    $("#status_row").hide();
+		    first_row = $("#thumbs .thumb-row:first");
+		    if(first_row.children().length < 4) {
+			    first_row.prepend("<div class=\"span3 thumb\"><a href=\""+url+"\" target=\"_blank\"><img src=\""+img+"\" /></a></div>");
+		    } else {
+			    $("#thumbs").prepend("<div class=\"row-fluid thumb-row\"></div>");
+			    addThumb(url, img);
+		    }
+	    }
+    </script>
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+  </head>
+
+  <body>
+<script type="text/javascript" src="/_ah/channel/jsapi"></script>
+	  
+	  <script type="text/javascript">
+		  function onOpened() {
+			  console.log("Opened channel {{ token }}");
+			 }
+function onMessage(data) {
+	console.log(data);
+				 d = JSON.parse(data.data);
+				 addThumb(decodeURIComponent(d.url), decodeURIComponent(d.img));
+			 }
+			 function onError(e) {
+				 console.log(e);
+			 }
+			 function onClose() {
+				 console.log ("CLOSED");
+			 }
+    channel = new goog.appengine.Channel('{{ token }}');
+    socket = channel.open();
+    socket.onopen = onOpened;
+    socket.onmessage = onMessage;
+    socket.onerror = onError;
+    socket.onclose = onClose;
+  </script>
+	  <!-- {{ token }} -->
+	  <!-- {{ session }} -->
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#">newsy</a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="http://www.iron.io">Iron.io</a></li>
+              <li><a href="http://dev.iron.io">Dev Center</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+	    <div class="row-fluid" id="start_row">
+		    <div class="hero-unit">
+			    <h1><a href="#" id="start_link">Queue Workers</a></h1>
+		    </div>
+	    </div>
+
+	    <div class="row-fluid" id="status_row" style="display: none;">
+		    <div class="hero-unit">
+			    <h1>Hardcore screencapping action...</h1>
+		    </div>
+	    </div>
+	    <div class="row-fluid">
+        <div class="span12" id="thumbs">
+          <div class="row-fluid thumb-row">
+          </div><!--/row-->
+        </div><!--/span-->
+      </div><!--/row-->
+    </div><!--/.fluid-container-->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap-transition.js"></script>
+    <script src="js/bootstrap-collapse.js"></script>
+    <script type="text/javascript">
+	    $("#start_link").click(function() {
+			    $.post("/queue/20", "session={{ session }}");
+			    $("#start_row").hide();
+			    $("#status_row").css("display", "");
+			    return false;
+			    });
+		    </script>
+  </body>
+</html>
